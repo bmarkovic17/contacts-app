@@ -1,0 +1,89 @@
+<form [formGroup]="contactForm">
+  <mat-toolbar color="primary">
+    <a routerLink="/contacts">
+      <mat-icon class="white-text">account_circle</mat-icon>
+    </a>
+
+    <mat-form-field>
+      <input formControlName="fullName" matInput class="white-text" type="text">
+    </mat-form-field>
+
+    <mat-form-field class="one-col">
+      <input formControlName="dateOfBirth" matInput [matDatepicker]="dp" class="white-text">
+      <mat-datepicker-toggle matSuffix *ngIf="toggle.value" [for]="dp" class="white-text"></mat-datepicker-toggle>
+      <mat-datepicker #dp></mat-datepicker>
+    </mat-form-field>
+
+    <mat-slide-toggle color="warn" [formControl]="toggle"></mat-slide-toggle>
+  </mat-toolbar>
+
+  <mat-toolbar *ngIf="toggle.value">
+    <span class="fill-remaining-space"></span>
+    <button mat-button type="button" [matMenuTriggerFor]="menu">Menu</button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item [disabled]="!contactForm.valid || !contactForm.dirty" (click)="save()">Save</button>
+      <button mat-menu-item type="button" class="warn-text" (click)="delete()">Delete</button>
+    </mat-menu>
+  </mat-toolbar>
+
+  <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="20px" class="left-right-margin">
+    <div fxFlex="grow" class="contact-data-form">
+      <div formArrayName="contactDataPhone" *ngFor="let mail of contactForm.get('contactDataPhone').controls; let i = index;">
+        <mat-form-field class="four-col">
+          <input [formControlName]="i" matInput class="black-text" type="tel" placeholder="Phone number">
+
+          <button mat-button matSuffix mat-icon-button type="button" *ngIf="toggle.value" (click)="deleteContactData('phone', i)">
+            <mat-icon class="warn-text">delete</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+
+      <div *ngIf="toggle.value" class="button-row center-element-20" (click)="addContactDataForm('phone')">
+        <button mat-button type="button">Add phone</button>
+      </div>
+    </div>
+
+    <div fxFlex="grow" class="contact-data-form">
+      <div formArrayName="contactDataMail" *ngFor="let mail of contactForm.get('contactDataMail').controls; let i = index;">
+        <mat-form-field class="four-col">
+          <input [formControlName]="i" matInput class="black-text" type="email" placeholder="E-mail address">
+
+          <button mat-button matSuffix mat-icon-button type="button" *ngIf="toggle.value" (click)="deleteContactData('mail', i)">
+            <mat-icon class="warn-text">delete</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+
+      <div *ngIf="toggle.value" class="button-row center-element-20" (click)="addContactDataForm('mail')">
+        <button mat-button type="button">Add mail</button>
+      </div>
+    </div>
+
+    <div fxFlex="grow">
+      <div fxLayout="column" fxLayoutGap="10px" class="contact-data-form">
+        <div>
+          <mat-form-field class="three-col">
+            <input formControlName="street" matInput class="black-text" type="text" placeholder="Street">
+          </mat-form-field>
+
+          <mat-form-field class="one-col">
+            <input formControlName="addressNumber" matInput class="black-text" type="text" placeholder="Address number">
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field class="one-col">
+            <input formControlName="postcode" matInput class="black-text" type="text" placeholder="Postcode">
+          </mat-form-field>
+          <mat-form-field class="three-col">
+            <input formControlName="city" matInput class="black-text" type="text" placeholder="City">
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field class="four-col">
+            <input formControlName="country" matInput class="black-text" type="text" placeholder="Country">
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

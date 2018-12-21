@@ -1,0 +1,106 @@
+<mat-toolbar color="primary">
+  <a routerLink="/contacts">
+    <mat-icon class="white-text">account_circle</mat-icon>
+  </a>
+
+  <mat-form-field>
+    <input matInput type="text" [formControl]="filter" (blur)="setValue('blur')" (focus)="setValue('focus')">
+
+    <button mat-button *ngIf="filter.value" matSuffix mat-icon-button (click)="setValue('clear')">
+      <mat-icon class="warn-text">close</mat-icon>
+    </button>
+  </mat-form-field>
+</mat-toolbar>
+
+<mat-accordion>
+  <mat-expansion-panel *ngFor="let contact of (contacts | async)">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <p class="bold-text">
+          {{ contact.name }} {{ contact.surname }}
+        </p>
+      </mat-panel-title>
+
+      <mat-panel-description fxHide fxShow.gt-xs>
+        {{ contact.dateOfBirth | date:'d. MMMM y.' }}
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <mat-divider></mat-divider>
+
+    <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="20px">
+      <div fxFlex="grow" class="contact-data-form">
+        <div *ngFor="let data of contact.contactData">
+          <mat-form-field *ngIf="data.contactDataType=='PHONE' && data.contactDataStatus=='Y'" class="four-col">
+            <input disabled matInput class="black-text" type="tel" placeholder="Phone number" value="{{ data.contactDataValue }}">
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div fxFlex="grow" class="contact-data-form">
+        <div *ngFor="let data of contact.contactData">
+          <mat-form-field *ngIf="data.contactDataType=='MAIL' && data.contactDataStatus=='Y'" class="four-col">
+            <input disabled matInput class="black-text" type="email" placeholder="E-mail address" value="{{ data.contactDataValue }}">
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div fxFlex="grow">
+        <div fxLayout="column" fxLayoutGap="10px" class="contact-data-form">
+          <div>
+            <mat-form-field class="three-col">
+              <input disabled matInput class="black-text" type="text" placeholder="Street" value="{{ contact.address.street }}">
+            </mat-form-field>
+            <mat-form-field class="one-col">
+              <input disabled matInput class="black-text" type="text" placeholder="Address number" value="{{ contact.address.addressNumber }}">
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-form-field class="one-col">
+              <input disabled matInput class="black-text" type="text" placeholder="Postcode" value="{{ contact.address.postcode }}">
+            </mat-form-field>
+            <mat-form-field class="three-col">
+              <input disabled matInput class="black-text" type="text" placeholder="City" value="{{ contact.address.city }}">
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-form-field class="four-col">
+              <input disabled matInput class="black-text" type="text" placeholder="Country" value="{{ contact.address.country }}">
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <mat-form-field class="four-col">
+      <mat-chip-list #chipList>
+        <mat-chip *ngFor="let tag of contact.contactTags" color="primary" selected>
+          {{ tag.contactTagName }}
+          <mat-icon matChipRemove (click)="remove(tag.contactTagId)">cancel</mat-icon>
+        </mat-chip>
+        <input
+          [matChipInputFor]="chipList"
+          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+          [matChipInputAddOnBlur]=true
+          (matChipInputTokenEnd)="add($event, contact.contactId)"
+          placeholder="Contact tags">
+      </mat-chip-list>
+    </mat-form-field>
+
+    <mat-action-row>
+      <button mat-button mat-icon-button [routerLink]="[contact.contactId]">
+        <mat-icon>open_in_new</mat-icon>
+      </button>
+    </mat-action-row>
+  </mat-expansion-panel>
+
+  <a routerLink="new">
+    <mat-expansion-panel disabled class="button">
+      <mat-expansion-panel-header>
+        <mat-panel-title class="center-text upper-text">
+          <a class="four-col warn-text">Add contact</a>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+    </mat-expansion-panel>
+  </a>
+</mat-accordion>
